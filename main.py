@@ -1,14 +1,13 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
-from camel_tools.diacritizer import Diacritizer
+import mishkal.tashkeel
 
 app = FastAPI(
     title="Arabic Tashkeel API",
     version="1.0.0"
 )
 
-# تحميل مشكّل CAMeL Tools مرة واحدة عند تشغيل السيرفر
-diacritizer = Diacritizer()
+tashkeel = mishkal.tashkeel.TashkeelClass()
 
 
 class TashkeelRequest(BaseModel):
@@ -20,7 +19,7 @@ def root():
     return {
         "status": "online",
         "service": "Arabic Tashkeel API",
-        "engine": "CAMeL Tools"
+        "engine": "Mishkal"
     }
 
 
@@ -32,7 +31,7 @@ def health():
 
 
 @app.post("/tashkeel")
-def tashkeel(request: TashkeelRequest):
+def tashkeel_text(request: TashkeelRequest):
 
     text = request.text.strip()
 
@@ -43,7 +42,8 @@ def tashkeel(request: TashkeelRequest):
         }
 
     try:
-        result = diacritizer.diacritize(text)
+
+        result = tashkeel.tashkeel(text)
 
         return {
             "success": True,
