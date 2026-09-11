@@ -4,10 +4,8 @@ import mishkal.tashkeel
 
 app = FastAPI(
     title="Arabic Tashkeel API",
-    version="1.0.0"
+    version="1.0.1"
 )
-
-tashkeel = mishkal.tashkeel.TashkeelClass()
 
 
 class TashkeelRequest(BaseModel):
@@ -42,8 +40,10 @@ def tashkeel_text(request: TashkeelRequest):
         }
 
     try:
+        # إنشاء Mishkal داخل نفس Thread الخاص بالطلب
+        tashkeel_engine = mishkal.tashkeel.TashkeelClass()
 
-        result = tashkeel.tashkeel(text)
+        result = tashkeel_engine.tashkeel(text)
 
         return {
             "success": True,
